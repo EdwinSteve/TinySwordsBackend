@@ -13,36 +13,51 @@ enum Role {
 }
 
 model User {
-  id          String   @id @default(uuid()) @db.VarChar(191)
-  nickname    String   @unique @db.VarChar(191)
-  fullName    String   @db.VarChar(191)
-  email       String   @unique @db.VarChar(191)
-  password    String   @db.VarChar(191)
-  birthDate   DateTime @db.DateTime(3)
-  createdAt   DateTime @default(now()) @db.DateTime(3)
+  id        String   @id @default(uuid()) @db.Char(36)
+  nickname  String   @unique @db.VarChar(191)
+  fullName  String   @db.VarChar(191)
+  email     String   @unique @db.VarChar(191)
+  password  String   @db.VarChar(191)
+  birthDate DateTime @db.DateTime(3)
+  createdAt DateTime @default(now()) @db.DateTime(3)
 
-  matchId     String?  @db.VarChar(191)
-  match       Match?   @relation(fields: [matchId], references: [id])
+  // Relación con partidas
+  matchId String? @db.Char(36)
+  match   Match?  @relation(fields: [matchId], references: [id])
 
-  createdMatch Match?  @relation("CreatorMatch")
+  // Relación con partida creada (si es ADMIN)
+  createdMatch Match? @relation("CreatorMatch")
 
-  role        Role?    @default(PLAYER)
+  role  Role @default(PLAYER)
+  score Int  @default(0)
 
-  score       Int      @default(0)
+  // Relaciones de amistad
+  friends  Friendship[] @relation("UserFriends")
+  friendOf Friendship[] @relation("UserFriendOf")
 }
 
+model Friendship {
+  id          String   @id @default(uuid()) @db.VarChar(191)
+  userId      String   @db.VarChar(191)
+  friendId    String   @db.VarChar(191)
+  status      String   @default("PENDING") @db.VarChar(20)
+  requestedBy String   @default("SYSTEM") @db.VarChar(191) // valor por defecto
+  createdAt   DateTime @default(now()) @db.DateTime(3)
+
+  user   User @relation("UserFriends", fields: [userId], references: [id])
+  friend User @relation("UserFriendOf", fields: [friendId], references: [id])
+}
 
 model Match {
-  id          String   @id @default(uuid()) @db.VarChar(191)
-  title       String   @db.VarChar(191) 
-  maxPlayers  Int
-  createdAt   DateTime @default(now()) @db.DateTime(3)
+  id         String   @id @default(uuid()) @db.Char(36)
+  title      String   @db.VarChar(191)
+  maxPlayers Int
+  createdAt  DateTime @default(now()) @db.DateTime(3)
 
   // Relación: un usuario es el creador
-  creatorId   String   @unique
-  creator     User     @relation("CreatorMatch", fields: [creatorId], references: [id])
+  creatorId String @unique @db.Char(36)
+  creator   User   @relation("CreatorMatch", fields: [creatorId], references: [id])
 
   // Relación: una partida tiene muchos jugadores
-  players     User[]
+  players User[]
 }
-

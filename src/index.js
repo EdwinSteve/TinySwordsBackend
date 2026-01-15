@@ -5,6 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import matchRoutes from './routes/matches.js';
+import matchRoutesV2 from './routes/matches.routes.js';
 import { initGameSocket } from './sockets/gameSocket.js';
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(express.json());
 // Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/matches', matchRoutes);
+app.use('/api/matches/v2', matchRoutesV2);
 
 // Socket.IO
 initGameSocket(io);

@@ -69,7 +69,7 @@ class MatchService {
 
     const matchUpdated = this.getMatchById(matchId);
 
-    const joinedPlayer = matchUpdated.players.find(p => p.id === userId);
+    const joinedPlayer = await userService.getByUserId(userId);
 
     return { match: matchUpdated, player: joinedPlayer };
   }

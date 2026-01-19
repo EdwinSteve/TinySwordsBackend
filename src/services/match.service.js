@@ -88,6 +88,7 @@ class MatchService {
 
       return { message: "El administrador salió, la partida fue eliminada y todos fueron expulsados" };
     }
+    
     userService.deleteMatchIdFromUser(userId);
     
     return { message: "Has salido de la partida" };
